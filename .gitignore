@@ -1,0 +1,22 @@
+# Python
+*.pyc
+__pycache__/
+
+# Environment
+.env
+venv/
+env/
+
+# Flask
+instance/
+*.sqlite3
+*.db
+
+# Celery
+celerybeat-schedule
+
+# Logs
+*.log
+
+# Uploads
+uploads/
