@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twarc Reader - Tweets</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        /* Global Styles */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #ffffff;
+            color: #1d1d1f;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid #e0e0e0;
+        }
+        .navbar-brand {
+            font-weight: 700;
+            font-size: 1.5rem;
+            color: #1d1d1f !important;
+        }
+        .nav-link {
+            color: #1d1d1f !important;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        .nav-link:hover {
+            color: #007aff !important;
+        }
+        .btn-outline-dark {
+            border: none;
+            background: none;
+            font-size: 1.25rem;
+            padding: 0.5rem;
+            transition: transform 0.2s;
+        }
+        .btn-outline-dark:hover {
+            transform: scale(1.1);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+            flex: 1;
+        }
+        h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+        }
+        .filters {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        .filters select, .filters input {
+            padding: 0.5rem;
+            border-radius: 8px;
+            border: 1px solid #e0e0e0;
+        }
+        .card {
+            border: none;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 1.5rem;
+        }
+        .card-body {
+            padding: 1.5rem;
+        }
+        .card-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+        }
+        .card-text {
+            font-size: 1rem;
+            color: #1d1d1f;
+        }
+        .text-muted {
+            color: #6c757d !important;
+        }
+        .btn-outline-primary {
+            border-color: #1d1d1f;
+            color: #1d1d1f;
+        }
+        .btn-outline-primary:hover {
+            background-color: #1d1d1f;
+            color: #ffffff;
+        }
+        .btn-primary {
+            background-color: #007aff;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 8px;
+            font-weight: 500;
+        }
+        .btn-primary:hover {
+            background-color: #0063cc;
+        }
+        .tweet-actions {
+            display: flex;
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+        .tweet-actions button {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            transition: color 0.2s;
+        }
+        .tweet-actions button:hover {
+            color: #007aff;
+        }
+        footer {
+            background-color: rgba(255, 255, 255, 0.9);
+            backdrop-filter: blur(10px);
+            border-top: 1px solid #e0e0e0;
+            padding: 1rem 0;
+            text-align: center;
+        }
+        footer p {
+            margin: 0;
+            color: #6c757d;
+        }
+
+        /* Dark Mode Styles */
+        body.dark-mode {
+            background-color: #000000;
+            color: #f5f5f7;
+        }
+        .dark-mode .navbar {
+            background-color: rgba(0, 0, 0, 0.9);
+            border-bottom: 1px solid #333333;
+        }
+        .dark-mode .navbar-brand {
+            color: #f5f5f7 !important;
+        }
+        .dark-mode .nav-link {
+            color: #f5f5f7 !important;
+        }
+        .dark-mode .nav-link:hover {
+            color: #0a84ff !important;
+        }
+        .dark-mode .btn-outline-dark {
+            color: #f5f5f7;
+        }
+        .dark-mode .card {
+            background-color: #1c1c1e;
+            box-shadow: 0 4px 12px rgba(255, 255, 255, 0.1);
+        }
+        .dark-mode .card-title {
+            color: #f5f5f7;
+        }
+        .dark-mode .card-text {
+            color: #f5f5f7;
+        }
+        .dark-mode .text-muted {
+            color: #9e9e9e !important;
+        }
+        .dark-mode .btn-outline-primary {
+            border-color: #f5f5f7;
+            color: #f5f5f7;
+        }
+        .dark-mode .btn-outline-primary:hover {
+            background-color: #f5f5f7;
+            color: #000000;
+        }
+        .dark-mode .btn-primary {
+            background-color: #0a84ff;
+        }
+        .dark-mode .btn-primary:hover {
+            background-color: #007aff;
+        }
+        .dark-mode .tweet-actions button {
+            color: #9e9e9e;
+        }
+        .dark-mode .tweet-actions button:hover {
+            color: #0a84ff;
+        }
+        .dark-mode footer {
+            background-color: rgba(0, 0, 0, 0.9);
+            border-top: 1px solid #333333;
+        }
+        .dark-mode footer p {
+            color: #9e9e9e;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="#">Twarc Reader</a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('upload_file') }}">Upload Tweets</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{{ url_for('view_tweets') }}">View Tweets</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav ms-auto">
+                    <li class="nav-item">
+                        <button id="darkModeToggle" class="btn btn-outline-dark">☀️</button>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <div class="container">
+        <h1>Tweets</h1>
+        <!-- Filters -->
+        <div class="filters">
+            <input type="date" id="startDate" placeholder="Start Date">
+            <input type="date" id="endDate" placeholder="End Date">
+            <select id="dayFilter">
+                <option value="">Select Day</option>
+                <option value="0">Sunday</option>
+                <option value="1">Monday</option>
+                <option value="2">Tuesday</option>
+                <option value="3">Wednesday</option>
+                <option value="4">Thursday</option>
+                <option value="5">Friday</option>
+                <option value="6">Saturday</option>
+            </select>
+            <select id="monthFilter">
+                <option value="">Select Month</option>
+                <option value="1">January</option>
+                <option value="2">February</option>
+                <option value="3">March</option>
+                <option value="4">April</option>
+                <option value="5">May</option>
+                <option value="6">June</option>
+                <option value="7">July</option>
+                <option value="8">August</option>
+                <option value="9">September</option>
+                <option value="10">October</option>
+                <option value="11">November</option>
+                <option value="12">December</option>
+            </select>
+            <input type="number" id="yearFilter" placeholder="Year">
+            <select id="sortBy">
+                <option value="">Sort By</option>
+                <option value="date_asc">Date (Oldest First)</option>
+                <option value="date_desc">Date (Newest First)</option>
+                <option value="time_asc">Time (Earliest First)</option>
+                <option value="time_desc">Time (Latest First)</option>
+            </select>
+            <button onclick="applyFilters()" class="btn btn-primary">Apply</button>
+        </div>
+        <!-- Tweets -->
+        <div>
+            {% for tweet in tweets %}
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ tweet[2] }} <small class="text-muted">@{{ tweet[3] }}</small></h5>
+                        <p class="card-text">{{ tweet[1] }}</p>
+                        <p class="card-text"><small class="text-muted">{{ tweet[0] }}</small></p>
+                        <div class="tweet-actions">
+                            <button>❤️ <span>Like</span></button>
+                            <button>🔁 <span>Retweet</span></button>
+                            <button>💬 <span>Reply</span></button>
+                        </div>
+                        <!-- Display reply count -->
+                        <p class="card-text"><small class="text-muted">{{ tweet[4] }} replies</small></p>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+        <!-- Pagination -->
+        <div class="pagination mt-4">
+            {% if page > 1 %}
+                <a href="{{ url_for('view_tweets', page=page-1) }}{% if filters %}&start_date={{ filters.start_date }}{% endif %}{% if filters.end_date %}&end_date={{ filters.end_date }}{% endif %}{% if filters.day %}&day={{ filters.day }}{% endif %}{% if filters.month %}&month={{ filters.month }}{% endif %}{% if filters.year %}&year={{ filters.year }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}" class="btn btn-outline-primary">Previous</a>
+            {% endif %}
+            <span class="mx-3">Page {{ page }} of {{ total_pages }}</span>
+            {% if page < total_pages %}
+                <a href="{{ url_for('view_tweets', page=page+1) }}{% if filters %}&start_date={{ filters.start_date }}{% endif %}{% if filters.end_date %}&end_date={{ filters.end_date }}{% endif %}{% if filters.day %}&day={{ filters.day }}{% endif %}{% if filters.month %}&month={{ filters.month }}{% endif %}{% if filters.year %}&year={{ filters.year }}{% endif %}{% if sort_by %}&sort_by={{ sort_by }}{% endif %}" class="btn btn-outline-primary">Next</a>
+            {% endif %}
+        </div>
+    </div>
+    <footer>
+        <p>Twarc Reader v1.0 | Powered by Flask | <a href="https://github.com/your-repo" target="_blank">GitHub</a></p>
+    </footer>
+    <script>
+        const darkModeToggle = document.getElementById('darkModeToggle');
+        const body = document.body;
+
+        // Check for saved dark mode preference in localStorage
+        if (localStorage.getItem('dark-mode') === 'enabled') {
+            body.classList.add('dark-mode');
+            darkModeToggle.textContent = '🌙';
+        }
+
+        darkModeToggle.addEventListener('click', () => {
+            body.classList.toggle('dark-mode');
+            if (body.classList.contains('dark-mode')) {
+                darkModeToggle.textContent = '🌙';
+                localStorage.setItem('dark-mode', 'enabled');
+            } else {
+                darkModeToggle.textContent = '☀️';
+                localStorage.setItem('dark-mode', 'disabled');
+            }
+        });
+
+        // Apply filters
+        function applyFilters() {
+            const startDate = document.getElementById('startDate').value;
+            const endDate = document.getElementById('endDate').value;
+            const day = document.getElementById('dayFilter').value;
+            const month = document.getElementById('monthFilter').value;
+            const year = document.getElementById('yearFilter').value;
+            const sortBy = document.getElementById('sortBy').value;
+
+            let url = '/tweets?';
+            if (startDate) url += `start_date=${startDate}&`;
+            if (endDate) url += `end_date=${endDate}&`;
+            if (day) url += `day=${day}&`;
+            if (month) url += `month=${month}&`;
+            if (year) url += `year=${year}&`;
+            if (sortBy) url += `sort_by=${sortBy}&`;
+
+            window.location.href = url.slice(0, -1); // Remove the trailing '&'
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
