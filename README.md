@@ -104,16 +104,7 @@ twarc_reader/
 
 - Click the **☀️/🌙** button in the top-right corner to toggle between light and dark modes.
 
----
-
-## Screenshots
-
-### Light Mode
-![Light Mode](https://via.placeholder.com/600x400?text=Twarc+Reader+Light+Mode)
-
-### Dark Mode
-![Dark Mode](https://via.placeholder.com/600x400?text=Twarc+Reader+Dark+Mode)
-
+  
 ---
 
 ## License
